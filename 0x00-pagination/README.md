@@ -13,11 +13,7 @@ The project consists of several tasks:
 3. **Hypermedia Pagination**: Extend the `Server` class with a `get_hyper` method that returns paginated data along with additional hypermedia metadata, including the next page, previous page, and total number of pages.
 
 4. **Deletion-Resilient Hypermedia Pagination**: Implement a `get_hyper_index` method in the `Server` class that ensures deletion-resilient hypermedia pagination. This method calculates the appropriate indexes for retrieving data even when items are deleted between queries.
-
-Follow the instructions in each task to complete the project successfully.
-
-For detailed task descriptions and code examples, please refer to the provided project files.
-
+   
 ## Project Structure
 The project directory structure is organized as follows:
 
