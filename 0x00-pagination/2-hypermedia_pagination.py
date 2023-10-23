@@ -45,8 +45,11 @@ class Server:
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
         """Gets a hypermedia pagination. """
+        assert isinstance(page, int) and isinstance(page_size, int)
+        assert page > 0 and page_size > 0
+
         data = self.get_page(page, page_size)
-        dataset_len = float(len(self.dataset()))
+        dataset_len = len(self.dataset())
         total_pages = math.ceil(dataset_len / page_size)
         next_page = page + 1 if page <= total_pages else None
         prev_page = page - 1 if page > 1 else None
