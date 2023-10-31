@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""2-app.py """
+"""A Basic Flask app with internationalization support.
+"""
 
 
 from flask import Flask, render_template, g, request
@@ -11,15 +12,17 @@ babel = Babel(app)
 
 
 class Config:
-    """App Configuration. """
+    """App Configuration.
+    """
     LANGUAGES = ["en", "fr"]
     BABEL_DEFAULT_LOCALE = "en"
     BABEL_DEFAULT_TIMEZONE = "UTC"
 
 
 @babel.localeselector
-def get_locale():
-    """Gets the local language. """
+def get_locale() -> str:
+    """Gets the local language.
+    """
     return request.accept_languages.best_match(
         app.config.get('LANGUAGES', ['en', 'fr']))
 
@@ -28,9 +31,10 @@ app.config.from_object(Config)
 
 
 @app.route("/")
-def index():
-    """Handles root route. """
-    return render_template('2-index.html', lang=get_locale()), 200
+def index() -> str:
+    """Handles root route.
+    """
+    return render_template('3-index.html')
 
 
 if __name__ == "__main__":
