@@ -3,7 +3,7 @@
 """
 
 
-from flask import Flask, render_template, g, request
+from flask import Flask, render_template, request
 from flask_babel import Babel
 
 
@@ -11,8 +11,8 @@ app = Flask(__name__)
 babel = Babel(app)
 
 
-class Config:
-    """App Configuration.
+class Config(object):
+    """Flask Babel Configuration.
     """
     LANGUAGES = ["en", "fr"]
     BABEL_DEFAULT_LOCALE = "en"
@@ -30,7 +30,7 @@ def get_locale() -> str:
 app.config.from_object(Config)
 
 
-@app.route("/")
+@app.route("/", strict_slashes=False)
 def index() -> str:
     """Handles root route.
     """
