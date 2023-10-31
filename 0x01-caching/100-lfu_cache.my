@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+"""100-lfu_cache.py """
+
+
+BaseCaching = __import__('base_caching').BaseCaching
+LRUCache = __import__('3-lru_cache').LRUCache
+
+
+class LFUCache(BaseCaching):
+    """Caches data. """
+
+    def __init__(self):
+        super().__init__()
+        self.freq_lru = {}
+        self.freq_lfu = {}
+        self.index = 0
+
+    def put(self, key, item):
+        """Adds data to the cache. """
+        if key is None or item is None:
+            return
+
+        self.cache_data[key] = item
+        self.freq_lru[key] = self.index
+        self.freq_lfu[key] = self.freq_lfu.get(key, 0) + 1
+        self.index += 1
+
+        if len(self.cache_data) > BaseCaching.MAX_ITEMS:
+            min_key_lfu = min(self.freq_lfu.values())
+            lfu = {k:self.freq_lru.get(k) for k,v in self.freq_lfu.items() if v == min_key_lfu}
+            
+            if len(lfu) > 1:
+                min_key = min(lfu, key=lfu.get)
+            else:
+                min_key = list(lfu)[0]
+            self.cache_data.pop(min_key)
+            self.freq_lru.pop(min_key)
+            self.freq_lfu.pop(min_key)
+            print(f'DISCARD: {min_key}')
+
+    def get(self, key):
+        """Gets data from the cache. """
+        if key in self.cache_data:
+            self.freq_lru[key] = self.index
+            self.freq_lfu[key] = self.freq_lfu.get(key, 0) + 1
+            self.index += 1
+
+        return self.cache_data.get(key) if key else None
