@@ -30,15 +30,19 @@ class Config(object):
 def get_locale() -> str:
     """Gets the local language.
     """
+    languages = ["en", "fr"]
+
     lang = request.args.get('locale', None)
-    if lang:
+    if lang and lang in languages:
         return Locale(language=lang)
 
-    if g.user.get('locale', None):
-        return g.user.get('locale')
+    if g.user:
+        lang_user = g.user.get('locale', None)
+        if lang_user and lang_user in languages:
+            return g.user.get('locale')
 
     lang_header = request.headers.get('locale')
-    if lang_header:
+    if lang_header and lang_header in languages:
         return lang_header
 
     return request.accept_languages.best_match(
