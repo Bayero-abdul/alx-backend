@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""A Basic Flask app with internationalization support.
+"""
+
+
+from flask import Flask, render_template, request, g, session
+from flask_babel import Babel, Locale
+from pytz import timezone
+import pytz
+
+app = Flask(__name__)
+babel = Babel(app)
+
+users = {
+    1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
+    2: {"name": "Beyonce", "locale": "en", "timezone": "US/Central"},
+    3: {"name": "Spock", "locale": "kg", "timezone": "Vulcan"},
+    4: {"name": "Teletubby", "locale": None, "timezone": "Europe/London"},
+}
+
+
+class Config(object):
+    """Flask Babel Configuration.
+    """
+    LANGUAGES = ["en", "fr"]
+    BABEL_DEFAULT_LOCALE = "en"
+    BABEL_DEFAULT_TIMEZONE = "UTC"
+
+
+@babel.localeselector
+def get_locale() -> str:
+    """Gets the local language.
+    """
+    languages = ["en", "fr"]
+
+    lang = request.args.get('locale', None)
+    if lang and lang in languages:
+        return Locale(language=lang)
+
+    if g.user:
+        lang_user = g.user.get('locale', None)
+        if lang_user and lang_user in languages:
+            return g.user.get('locale')
+
+    lang_header = request.headers.get('locale')
+    if lang_header and lang_header in languages:
+        return lang_header
+
+    return request.accept_languages.best_match(
+        app.config.get('LANGUAGES', ['en', 'fr']))
+
+
+def get_user() -> dict:
+    """Finds a user.
+    """
+    user_id = request.args.get('login_as', None)
+    if user_id:
+        return users.get(int(user_id), None)
+    return None
+
+
+@babel.timezoneselector
+def get_timezone() -> str:
+    """Gets time zone. """
+    url_timezone = request.args.get('timezone')
+    user_timezone = g.user.get('timezone') if g.user else None
+
+    selected_timezone = url_timezone or user_timezone
+    print(selected_timezone)
+    try:
+        pytz.timezone(selected_timezone).zone
+    except pytz.exceptions.UnknownTimeZoneError:
+        selected_timezone = app.config.get('BABEL_DEFAULT_TIMEZONE',
+                                           None)
+
+    return selected_timezone
+
+
+@app.before_request
+def before_request() -> None:
+    """Gets a user before each request.
+    """
+    g.user = get_user()
+
+
+app.config.from_object(Config)
+
+
+@app.route("/", strict_slashes=False)
+def index() -> str:
+    """Handles root route.
+    """
+    return render_template('7-index.html', time=get_timezone())
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
