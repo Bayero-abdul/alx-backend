@@ -43,7 +43,7 @@ class Server:
         """Gets a page starting at index with a size of page size
         """
         dataset = self.indexed_dataset()
-        assert index and index >= 0 and index < len(dataset.keys)
+        assert index and index >= 0 and index < len(dataset)
         page_data = []
         data_count = 0
         next_index = None
