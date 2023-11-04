@@ -40,8 +40,10 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """Gets a page starting at index with a size of page size
+        """
         dataset = self.indexed_dataset()
-        assert index is not None and index >= 0 and index <= max(dataset.keys())
+        assert index and index >= 0 and index < len(dataset.keys)
         page_data = []
         data_count = 0
         next_index = None
